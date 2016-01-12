@@ -8,8 +8,8 @@ module.exports = function(options, imports, register) {
     var db = imports.db;
     var oauth = imports.oauth;
 
-    var User = UserModel.getInstance(db);
-    var userController = UserController(User);
+    var userModel = UserModel(db);
+    var userController = UserController(userModel.getInstance());
 
     api.on({
         method: 'POST',
