@@ -1,0 +1,20 @@
+{
+  "name": "express-arch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "architect": "^0.1.11",
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "mongoose": "^4.3.5",
+    "oauth2orize": "^1.2.0",
+    "passport": "^0.3.2",
+    "passport-http-bearer": "^1.0.1"
+  }
+}
