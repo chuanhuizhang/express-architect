@@ -1,4 +1,5 @@
 'use strict'
+
 var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy
 var oauth2orize = require('oauth2orize');
