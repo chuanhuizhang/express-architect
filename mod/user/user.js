@@ -1,6 +1,7 @@
 'use strict'
 
 var UserModel = require('./userModel');
+var UserController = require('./userController');
 
 module.exports = function(options, imports, register) {
     var api = imports.api;
@@ -8,6 +9,7 @@ module.exports = function(options, imports, register) {
     var oauth = imports.oauth;
 
     var User = UserModel.getInstance(db);
+    var userController = new UserController(User);
 
     var postUsers = function(req, res, next) {
         console.log(req.body);
@@ -19,6 +21,11 @@ module.exports = function(options, imports, register) {
         res.json({success: 'user'});
     }
 
+    var signIn = function(req, res, next) {
+        console.log(req.body);
+        res.json({success: 'logged in'});
+    }
+
     api.on({
         method: 'POST',
         path: '/users',
@@ -28,7 +35,13 @@ module.exports = function(options, imports, register) {
     api.on({
         method: 'GET',
         path:'/users/:id',
-        handler: [oauth.isAuthenticated, getUser]
+        handler: [oauth.isAuthenticated, userController.getUser]
+    });
+
+    api.on({
+        method: 'POST',
+        path:'/signin',
+        handler: [oauth.isAuthenticated, signIn]
     });
 
     register(null, {
