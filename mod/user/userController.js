@@ -1,28 +1,44 @@
 module.exports = function(User) {
+    return {
+        create: function(req, res, next) {
+            var user = new User({
+                email: req.body.email,
+                password: req.body.password,
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+                created_at: new Date()
+            });
 
-    this.create = function(req, res, next) {
-        var user = new User({
-            email: 'michael@bond.co',
-            password: 'test1234',
-            created_at: new Date()
-        });
+            user.save(function(err, userSaved) {
+                if (err) throw err;
+                res.json(userSaved);
+            });
+        },
 
-        user.save(function(err, userSaved) {
-            if (err) throw err;
-            res.json(userSaved);
-        });
-    }.;
+        getAll: function(req, res, next) {
+            User.find({}, function(err, users) {
+                if (err) throw err;
+                res.json(users);
+            });
+        },
 
-    this.getAll = function(req, res, next) {
+        getById: function(req, res, next) {
+            User.find({_id: req.params.id}, function(err, user) {
+                if (err) throw err;
+                res.json(user);
+            });
+        },
 
-        User.find({}, function(err, users) {
-            if (err) throw err;
-            res.json(users);
-        });
-    };
-
-    this.getUser = function(req, res, next) {
-        console.log(req.params);
-        res.json({success: true});
-    };
+        signIn: function(req, res, next) {
+            User.find({email: req.body.email}, function(err, user) {
+                if (err) throw err;
+                if (!user) {
+                    res.status(401);
+                    res.json({success: false, code: 401, msg: 'User does not exist!'});
+                    return;
+                }
+                res.json(user);
+            });
+        }
+    }
 }

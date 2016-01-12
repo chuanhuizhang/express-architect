@@ -9,39 +9,30 @@ module.exports = function(options, imports, register) {
     var oauth = imports.oauth;
 
     var User = UserModel.getInstance(db);
-    var userController = new UserController(User);
-
-    var postUsers = function(req, res, next) {
-        console.log(req.body);
-        res.json({success: 'user has been created!'});
-    }
-
-    var getUser = function(req, res, next) {
-        console.log(req.params);
-        res.json({success: 'user'});
-    }
-
-    var signIn = function(req, res, next) {
-        console.log(req.body);
-        res.json({success: 'logged in'});
-    }
+    var userController = UserController(User);
 
     api.on({
         method: 'POST',
         path: '/users',
-        handler: [oauth.isAuthenticated, postUsers]
+        handler: [oauth.isAuthenticated, userController.create]
+    });
+
+    api.on({
+        method: 'GET',
+        path: '/users',
+        handler: [oauth.isAuthenticated, userController.getAll]
     });
 
     api.on({
         method: 'GET',
         path:'/users/:id',
-        handler: [oauth.isAuthenticated, userController.getUser]
+        handler: [oauth.isAuthenticated, userController.getById]
     });
 
     api.on({
         method: 'POST',
         path:'/signin',
-        handler: [oauth.isAuthenticated, signIn]
+        handler: [oauth.isAuthenticated, userController.signIn]
     });
 
     register(null, {
