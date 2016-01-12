@@ -32,6 +32,13 @@ module.exports = function(db) {
         });
     });
 
+    UserSchema.methods.verifyPassword = function(password, callback) {
+        bcrypt.compare(password, this.password, function(err, isMatch) {
+            if (err) return callback(err);
+            callback(null, isMatch);
+        });
+    };
+
     return {
         getInstance: function() {
             return db.model('User', UserSchema);

@@ -30,14 +30,28 @@ module.exports = function(User) {
         },
 
         signIn: function(req, res, next) {
-            User.find({email: req.body.email}, function(err, user) {
+            User.findOne({email: req.body.email}, function(err, user) {
                 if (err) throw err;
                 if (!user) {
                     res.status(401);
                     res.json({success: false, code: 401, msg: 'User does not exist!'});
                     return;
                 }
-                res.json(user);
+
+                // Make sure the password is correct
+                user.verifyPassword(req.body.password, function(err, isMatch) {
+                    if (err) throw err;
+
+                    // Password did not match
+                    if (!isMatch) {
+                        res.status(401);
+                        res.json({success: false, code: 401, msg: 'User does not exist!'});
+                        return;
+                    }
+
+                    user.password = undefined; // remove password in response
+                    res.json(user);
+                });
             });
         }
     }
