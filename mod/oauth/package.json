@@ -1,10 +1,10 @@
 {
-  "name": "auth",
+  "name": "oauth",
   "version": "0.0.1",
-  "main": "auth.js",
+  "main": "oauth.js",
   "private": true,
   "plugin": {
-    "provides": ["auth"],
+    "provides": ["oauth"],
     "consumes": ["api", "db"]
   }
 }

@@ -1,7 +1,7 @@
 module.exports = [
   './mod/api',
   './mod/db',
-  './mod/auth',
+  './mod/oauth',
   './mod/user',
   // {
   //   packagePath: './mod/db', 'dburl': 'mongodb://localhost:27017/node-arch',
