@@ -1,10 +1,17 @@
 'use strict'
 
 var express = require('express');
+var path = require('path');
+var ejs = require('ejs');
 var bodyParser = require('body-parser');
 
 
 var app = express();
+
+// view engine setup
+app.set('views', path.join(process.cwd(), 'mod', 'oauth'));
+app.set('view engine', 'ejs');
+
 app.use(bodyParser.urlencoded({
   limit: '5mb',
   extended: true
@@ -14,6 +21,11 @@ app.use(bodyParser.json({limit: '5mb'}));
 var router = express.Router();
 app.use('/', router);
 
+router.get('/', function(req, res, next) {
+	res.json({
+		success: 'Welcome to use our API!'
+	});
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

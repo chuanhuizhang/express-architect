@@ -54,6 +54,20 @@ module.exports = function(options, imports, register) {
 		}
 	}));
 
+	// server.authorization(function(clientId, redirectUri, callback) {
+
+	//     Client.findOne({ id: clientId }, function (err, client) {
+	//     	if (err) return callback(err);
+	//     	return callback(null, client, redirectUri);
+	//     });
+	//  }),
+
+
+	var authorzie = function(req, res, next) {
+		console.log(req.query);
+		res.render('signin', {redirect_url: req.query.redirect_url});
+	}
+
 	passport.use(new BearerStrategy(
 	  function(accessToken, callback) {
 	    Token.findOne({value: accessToken }, function (err, token) {
@@ -79,6 +93,12 @@ module.exports = function(options, imports, register) {
 		method: 'POST',
 		path: '/oauth/token',
 		handler: [server.token(), server.errorHandler()]
+	});
+
+	api.on({
+		method: 'GET',
+		path: '/oauth/authorize',
+		handler: authorzie
 	});
 
 	register(null, {
