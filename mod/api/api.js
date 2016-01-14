@@ -1,6 +1,7 @@
 'use strict'
 
 var express = require('express');
+var session = require('express-session');
 var path = require('path');
 var ejs = require('ejs');
 var bodyParser = require('body-parser');
@@ -17,6 +18,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json({limit: '5mb'}));
+
+// Use express session support since OAuth2orize requires it
+app.use(session({
+  secret: 'Super Secret Session Key',
+  saveUninitialized: true,
+  resave: true
+}));
 
 var router = express.Router();
 app.use('/', router);

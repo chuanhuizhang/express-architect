@@ -30,6 +30,20 @@ module.exports = function(options, imports, register) {
 	// Create OAuth 2.0 server
 	var server = oauth2orize.createServer();
 
+	server.serializeClient(function(client, callback) {
+	  return callback(null, client._id);
+	});
+
+	server.deserializeClient(function(id, callback) {
+		console.log(id);
+		var client = {name: 'thridPartyApp', _id: '123456'};
+		return callback(null, client);
+		// Client.findOne({ _id: id }, function (err, client) {
+		// 	if (err) { return callback(err); }
+		// 	return callback(null, client);
+		// });
+	});
+
 	server.grant(oauth2orize.grant.code(function(client, redirectUri, user, ares, callback) {
 	  var code = uid(16);
 	  callback(null, code);
@@ -54,18 +68,32 @@ module.exports = function(options, imports, register) {
 		}
 	}));
 
-	// server.authorization(function(clientId, redirectUri, callback) {
-
-	//     Client.findOne({ id: clientId }, function (err, client) {
-	//     	if (err) return callback(err);
-	//     	return callback(null, client, redirectUri);
-	//     });
-	//  }),
 
 
-	var authorzie = function(req, res, next) {
-		console.log(req.query);
-		res.render('signin', {redirect_url: req.query.redirect_url});
+	var authorzie = [
+		server.authorization(function(clientId, redirectUri, callback) {
+			console.log(clientId);
+			var client = {name: 'thridPartyApp', _id: '123456'};
+			return callback(null, client, redirectUri);
+		    // Client.findOne({ id: clientId }, function (err, client) {
+		    // 	if (err) return callback(err);
+		    // 	return callback(null, client, redirectUri);
+		    // });
+		}),
+		function(req, res, next) {
+			console.log(req.query);
+
+			res.render('dialog', { transactionID: req.oauth2.transactionID, client: req.oauth2.client });
+
+		}
+	];
+
+	var signIn = function(req, res, next) {
+		console.log(req.body);
+		//TODO: get user from db
+		var user = {'firstname': 'Chuanhui', email: 'michael@bond.co', password:'123456'};
+		res.status(200);
+		res.json(user);
 	}
 
 	passport.use(new BearerStrategy(
@@ -99,6 +127,18 @@ module.exports = function(options, imports, register) {
 		method: 'GET',
 		path: '/oauth/authorize',
 		handler: authorzie
+	});
+
+	api.on({
+		method: 'POST',
+		path: '/oauth/authorize',
+		handler: server.decision()
+	});
+
+	api.on({
+		method: 'POST',
+		path: '/oauth/signin',
+		handler: signIn
 	});
 
 	register(null, {
